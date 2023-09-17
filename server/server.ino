@@ -36,6 +36,7 @@ void setup()
   {
     delay(500);
     Serial.print(".");
+    WiFi.begin(ssid, password);
   }
   Serial.println("");
 

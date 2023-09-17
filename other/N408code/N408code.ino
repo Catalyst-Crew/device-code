@@ -25,12 +25,13 @@ bool emergency2 = 0;
 
 long previous_time = 0;
 
+
 LiquidCrystal lcd(A0, A1, A2, A3, A4, A5);
 
 void setup()
 {
   Serial.begin(9600);
-  // Serial.println("POWERED");
+  Serial.println("POWERED");
   esp8266.begin(9600);
   lcd.begin(20, 4);
   rfid1.begin(9600);
@@ -40,17 +41,28 @@ void setup()
   pinMode(data3, INPUT);
   lcd.clear();
   lcd.print("   IOT Worker");
+
+  Serial.print("   IOT Worker");
   lcd.setCursor(0, 1);
   lcd.print("Tracking System");
+
+  Serial.print("Tracking System");
   delay(5000); // delay 2 secs
 
   lcd.clear();
   lcd.print("connecting To WIFI");
+
+  Serial.print("connecting To WIFI");
   delay(2000);
   lcd.clear();
   lcd.print("Please Tap Your");
+
+  Serial.print("Please Tap Your");
   lcd.setCursor(0, 1);
   lcd.print("RFID Card...");
+
+
+  Serial.print("Card");
   delay(5000);
   previous_time = millis();
 }
@@ -102,11 +114,14 @@ void send_parameters()
   esp8266.listen();
   lcd.setCursor(14, 3);
   lcd.print("Upload");
+
+  Serial.print("Upload");
   esp8266.print(send_data);
+  Serial.print(send_data);
   delay(5000);
 }
 
-void serialEvent()
+void SerialEvent()
 {
   while (Serial.available())
   {
@@ -136,6 +151,8 @@ void scan()
   {
     lcd.setCursor(0, 2);
     lcd.print("Miner-1 EMERGENCY");
+
+    Serial.print("Miner-1 EMERGENCY");
     // ////Serial.println("MINER1-EMERGENCY");
     emergency1 = 1;
     delay(2000);
@@ -149,6 +166,8 @@ void scan()
   {
     lcd.setCursor(0, 3);
     lcd.print("Miner-2 EMERGENCY");
+
+    Serial.print("Miner-2 EMERGENCY");
     //////Serial.println("MINER2-EMERGENCY");
     emergency2 = 1;
     delay(2000);
@@ -166,40 +185,60 @@ void display()
   if (room1_2 == 1 && room1_1 == 1)
   {
     lcd.print("Mine1 =MINER1 MINER2");
+
+    Serial.print("Mine1 =MINER1 MINER2");
   }
   else if (room1_1 == 1)
   {
     lcd.print("Mine1 =MINER1");
+
+    Serial.print("Mine1 =MINER1");
   }
   else if (room1_2 == 1)
   {
     lcd.print("Mine1 =MINER2");
+
+    Serial.print("Mine1 =MINER2");
   }
 
   else
   {
     lcd.print("Mine1 = ");
+
+    Serial.print("Mine1 = ");
   }
   lcd.setCursor(0, 1);
   if (room2_2 == 1 && room2_1 == 1)
   {
     lcd.print("Mine2 =MINER1 MINER2");
+
+    Serial.print("Mine2 =MINER1 MINER2");
   }
   else if (room2_1 == 1)
   {
     lcd.print("Mine2 =MINER1");
+
+    Serial.print("Mine2 =MINER1");
   }
   else if (room2_2 == 1)
   {
     lcd.print("Mine2 =MINER2");
+
+    Serial.print("Mine2 =MINER2");
   }
   else
   {
     lcd.print("Mine2 = ");
+
+    Serial.print("Mine2 = ");
   }
   //  lcd.setCursor(0, 3);
   //  lcd.print("D=");// for debuging
+
+  //Serial.print("");
   //  lcd.print(send_data);// for debuging
+
+  //Serial.print("");
   delay(100);
 }
 
