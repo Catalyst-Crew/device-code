@@ -5,17 +5,15 @@
 #include <WiFiClient.h>
 #include <SoftwareSerial.h>
 
-// Use WiFiClientSecure class to create TLS connection
-WiFiClientSecure client;
-// WiFiClient client;
+WiFiClient client;
 WiFiServer server(80);
 const char *ssid = "project";
 const char *password = "project1234";
 
-const char *host = "ccb-c931.onrender.com";
-const int httpsPort = 443;
+const char *host = "http://34.135.233.62";
+const int httpsPort = 80;
 
-String site = "http://ccb-c931.onrender.com/measurements/iot-data?Id=karabomarope07@gmail.com&Pass=1166&Data=";
+String site = "http://34.135.233.62/measurements/iot-data?Data=";
 char data[100];
 String iot_data = "";
 String final_data = "";
@@ -24,10 +22,9 @@ bool receive_data_bit = 0;
 
 void setup()
 {
-  pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
-  Serial.println();
-  Serial.print("connecting to ");
+  // Serial.println();
+  Serial.print("Connecting to ");
   Serial.println(ssid);
 
   WiFi.mode(WIFI_STA);
@@ -36,12 +33,12 @@ void setup()
   {
     delay(500);
     Serial.print(".");
-    WiFi.begin(ssid, password);
   }
   Serial.println("");
 
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
+
   Serial.println(WiFi.localIP());
 
   Serial.print("connecting to ");
@@ -55,10 +52,6 @@ void setup()
 
 void loop()
 {
-  digitalWrite(LED_BUILTIN, HIGH); // turn the LED on (HIGH is the voltage level)
-  delay(1000);                     // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);  // turn the LED off by making the voltage LOW
-  delay(1000);
   if (receive_data_bit == 1)
   {
     final_data = site + iot_data;
@@ -73,6 +66,7 @@ void send_data()
   if (WiFi.status() == WL_CONNECTED)
   {
     HTTPClient http;
+
     http.begin(client, final_data);
     int httpCode = http.GET();
 
@@ -90,7 +84,7 @@ void send_data()
   {
     Serial.println("No wifi");
   }
-  delay(8000);
+  delay(1000);
   iot_data = "";
 }
 

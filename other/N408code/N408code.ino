@@ -3,7 +3,7 @@
 
 String iot_data[10];
 String send_data;
-SoftwareSerial esp8266(3, 2);
+SoftwareSerial espSerial(3,2);
 SoftwareSerial rfid1(4, 5);
 
 String inputString1 = "";
@@ -26,13 +26,14 @@ bool emergency2 = 0;
 long previous_time = 0;
 
 
-LiquidCrystal lcd(A0, A1, A2, A3, A4, A5);
+//LiquidCrystal lcd(A0, A1, A2, A3, A4, A5);
+LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 
 void setup()
 {
   Serial.begin(9600);
-  Serial.println("POWERED");
-  esp8266.begin(9600);
+  //Serial.println("POWERED");
+  espSerial.begin(9600);
   lcd.begin(20, 4);
   rfid1.begin(9600);
   pinMode(data0, INPUT);
@@ -47,15 +48,16 @@ void setup()
   lcd.print("Tracking System");
 
   Serial.print("Tracking System");
+  read_serial();
   delay(5000); // delay 2 secs
+  read_serial();
+  //lcd.clear();
+  //lcd.print("connecting To WIFI");
 
-  lcd.clear();
-  lcd.print("connecting To WIFI");
-
-  Serial.print("connecting To WIFI");
-  delay(2000);
-  lcd.clear();
-  lcd.print("Please Tap Your");
+  //Serial.print("connecting To WIFI");
+  //delay(2000);
+  //lcd.clear();
+  //lcd.print("Please Tap Your");
 
   Serial.print("Please Tap Your");
   lcd.setCursor(0, 1);
@@ -99,7 +101,7 @@ void loop()
   scan();
   fill_iot_data_string();
   send_data = (iot_data[0]) + "*" + String(iot_data[1]) + "*" + String(iot_data[2]) + "*" + String(iot_data[3]) + "*" + String(iot_data[4]) + "*" + String(iot_data[5]);
-  // Serial.println("send_data = " + String(send_data));
+
   display();
 
   if ((millis() - previous_time >= 30000) || emergency1 > 0 || emergency2 > 0)
@@ -111,14 +113,14 @@ void loop()
 
 void send_parameters()
 {
-  esp8266.listen();
+  espSerial.listen();
   lcd.setCursor(14, 3);
   lcd.print("Upload");
 
-  Serial.print("Upload");
-  esp8266.print(send_data);
+  //Serial.print("Upload");
+  espSerial.print(send_data);
   Serial.print(send_data);
-  delay(5000);
+  delay(3000);
 }
 
 void SerialEvent()
@@ -232,13 +234,6 @@ void display()
 
     Serial.print("Mine2 = ");
   }
-  //  lcd.setCursor(0, 3);
-  //  lcd.print("D=");// for debuging
-
-  //Serial.print("");
-  //  lcd.print(send_data);// for debuging
-
-  //Serial.print("");
   delay(100);
 }
 
@@ -281,4 +276,37 @@ void fill_iot_data_string()
   }
   iot_data[4] = String(emergency1);
   iot_data[5] = String(emergency2);
+}
+
+
+void read_serial(){
+  if (Serial.available() > 0) {
+    String data = "";
+    while (Serial.available()) {
+      delay(1);
+      char c = Serial.read();
+      data += c;
+    }
+    
+    lcd.setCursor(0, 1);
+    lcd.print(data);
+    delay(200);
+    lcd.clear();
+  }
+}
+
+String read_return_serial() {
+  if (Serial.available() > 0) {
+    String data = "";
+    while (Serial.available()) {
+      delay(1);
+      char c = Serial.read();
+      data += c;
+    }
+    
+    return data;
+  }
+  
+  // Return an empty string if no data is available
+  return "";
 }
